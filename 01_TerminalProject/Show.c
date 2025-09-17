@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
     redraw_text(win, &state, line_buffer);
 
     // Main key dispatch loop
-    for (int c = wgetch(win); c != 27; c = wgetch(win)) {
+    for (int c = wgetch(win); c != 27 && c != 'q'; c = wgetch(win)) {
         switch (c) {
             case ' ':
             case KEY_DOWN:
@@ -168,9 +168,18 @@ int main(int argc, char *argv[]) {
             case KEY_RIGHT:
                 ++state.x_offset;
                 break;
+            case KEY_END:
+                state.x_offset += state.x_total;
+                break;
             case KEY_LEFT:
                 if (state.x_offset > 0)
                     --state.x_offset;
+                break;
+            case KEY_HOME:
+                if (state.x_offset >= state.x_total)
+                    state.x_offset -= state.x_total;
+                else
+                    state.x_offset = 0;
                 break;
             default: break;
         }
