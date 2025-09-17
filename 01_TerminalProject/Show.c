@@ -86,8 +86,7 @@ static void redraw_text(WINDOW *win, struct window_state *state, char *line_buff
         unsigned start_offset = cur_offset + state->x_offset;
         if (start_offset < limit_to_write) {
             unsigned length_to_write = limit_to_write - start_offset;
-            memcpy(line_buffer, state->text + start_offset, length_to_write);
-            wprintw(win, "%.*s\n", length_to_write, line_buffer);
+            wprintw(win, "%.*s\n", length_to_write, state->text + start_offset);
         } else {
             wprintw(win, "\n");
         }
