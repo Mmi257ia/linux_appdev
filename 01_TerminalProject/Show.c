@@ -104,11 +104,15 @@ int main(int argc, char *argv[]) {
     }
     fseek(f, 0L, SEEK_END);
     long file_length = ftell(f);
-    void *f_mapped = mmap(NULL, file_length, PROT_READ, MAP_PRIVATE, fileno(f), 0);
-    if (f_mapped == MAP_FAILED) {
-        perror("Error on mmap");
-        fclose(f);
-        return 1;
+    // If the file is empty, f_mapped just won't be accessed, so it can be NULL
+    void *f_mapped = NULL;
+    if (file_length > 0) {
+        f_mapped = mmap(NULL, file_length, PROT_READ, MAP_PRIVATE, fileno(f), 0);
+        if (f_mapped == MAP_FAILED) {
+            perror("Error on mmap");
+            fclose(f);
+            return 1;
+        }
     }
 
     // setting up windows
@@ -169,7 +173,7 @@ int main(int argc, char *argv[]) {
     delwin(win);
     delwin(frame);
     endwin();
-    if (munmap(f_mapped, file_length)) {
+    if (f_mapped && munmap(f_mapped, file_length)) {
         perror("Error while unmapping file");
         return 1;
     }
