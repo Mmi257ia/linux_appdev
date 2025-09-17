@@ -99,14 +99,14 @@ int main(int argc, char *argv[]) {
     char *filename = argv[1];
     FILE *f = fopen(filename, "r");
     if (f == NULL) {
-        perror("Error while opening file:");
+        perror("Error while opening file");
         return 1;
     }
     fseek(f, 0L, SEEK_END);
     long file_length = ftell(f);
     void *f_mapped = mmap(NULL, file_length, PROT_READ, MAP_PRIVATE, fileno(f), 0);
     if (f_mapped == MAP_FAILED) {
-        perror("Error on mmap:");
+        perror("Error on mmap");
         fclose(f);
         return 1;
     }
@@ -117,13 +117,14 @@ int main(int argc, char *argv[]) {
     noecho();
     cbreak();
     refresh();
+
     // making frame box
     frame = make_frame(filename);
-    wrefresh(frame);
+
     // main window
     win = newwin(LINES - 2, COLS - 2, 1, 1);
     keypad(win, true);
-    wrefresh(win);
+    // wrefresh(win);
 
     struct window_state state;
     state.text = f_mapped;
@@ -169,11 +170,11 @@ int main(int argc, char *argv[]) {
     delwin(frame);
     endwin();
     if (munmap(f_mapped, file_length)) {
-        perror("Error while unmapping file:");
+        perror("Error while unmapping file");
         return 1;
     }
     if (fclose(f)) {
-        perror("Error while closing file:");
+        perror("Error while closing file");
         return 1;
     }
     return 0;
