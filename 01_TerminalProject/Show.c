@@ -134,33 +134,35 @@ int main(int argc, char *argv[]) {
 
     // Main key dispatch loop
     for (int c = wgetch(win); c != 27; c = wgetch(win)) {
-        // wprintw(win, "EL LE: %d %s\n", c, keyname(c));
         switch (c) {
             case ' ':
             case KEY_DOWN:
                 ++state.y_offset;
-                redraw_frame(frame, filename, state.y_offset, state.x_offset);
-                redraw_text(win, &state);
+                break;
+            case KEY_NPAGE: // page down
+                state.y_offset += state.y_total;
                 break;
             case KEY_UP:
                 if (state.y_offset > 0)
                     --state.y_offset;
-                redraw_frame(frame, filename, state.y_offset, state.x_offset);
-                redraw_text(win, &state);
+                break;
+            case KEY_PPAGE: // page up
+                if (state.y_offset >= state.y_total)
+                    state.y_offset -= state.y_total;
+                else
+                    state.y_offset = 0;
                 break;
             case KEY_RIGHT:
                 ++state.x_offset;
-                redraw_frame(frame, filename, state.y_offset, state.x_offset);
-                redraw_text(win, &state);
                 break;
             case KEY_LEFT:
                 if (state.x_offset > 0)
                     --state.x_offset;
-                redraw_frame(frame, filename, state.y_offset, state.x_offset);
-                redraw_text(win, &state);
                 break;
             default: break;
         }
+        redraw_frame(frame, filename, state.y_offset, state.x_offset);
+        redraw_text(win, &state);
     }
 
     delwin(win);
