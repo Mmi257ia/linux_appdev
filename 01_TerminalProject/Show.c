@@ -2,10 +2,10 @@
 #include <sys/mman.h>
 #include <stdio.h>
 #include <string.h>
-#include <locale.h>
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 
+// Struct that stores information needed to draw the correct place of file
 struct window_state {
     char *text;
     unsigned text_length;
@@ -79,11 +79,13 @@ static void redraw_text(WINDOW *win, struct window_state *state) {
     unsigned cur_drawed_line = 0;
     while (cur_offset < state->text_length && cur_drawed_line < state->y_total) {
         unsigned next_line_offset = next_line(state->text, state->text_length, cur_offset);
+        
         // write 1) to the end of the current line (excluding '\n') 2) inside the window
-        unsigned limit_to_write = min(next_line_offset - 1, cur_offset + state->x_offset + state->x_total - 1);
+        unsigned limit_to_write = min(next_line_offset - 1, cur_offset + state->x_offset + (state->x_total - 1));
         for (unsigned i = cur_offset + state->x_offset; i < limit_to_write; ++i)
             wprintw(win, "%c", state->text[i]);
         wprintw(win, "\n");
+
         cur_offset = next_line_offset;
         ++cur_drawed_line;
     }
@@ -91,7 +93,6 @@ static void redraw_text(WINDOW *win, struct window_state *state) {
 }
 
 int main(int argc, char *argv[]) {
-    setlocale(LC_ALL, "");
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
         return 1;
@@ -128,7 +129,6 @@ int main(int argc, char *argv[]) {
     // main window
     win = newwin(LINES - 2, COLS - 2, 1, 1);
     keypad(win, true);
-    // wrefresh(win);
 
     struct window_state state;
     state.text = f_mapped;
