@@ -67,7 +67,8 @@ static unsigned next_line(char *text, unsigned length, unsigned offset) {
 }
 
 // Redraw text in 'win' window given its current 'state'
-static void redraw_text(WINDOW *win, struct window_state *state) {
+// line_buffer is used to store current line
+static void redraw_text(WINDOW *win, struct window_state *state, char *line_buffer) {
     werase(win);
     unsigned cur_offset = 0, cur_line = 0;
     // Skip hidden lines
@@ -82,9 +83,14 @@ static void redraw_text(WINDOW *win, struct window_state *state) {
         
         // write 1) to the end of the current line (excluding '\n') 2) inside the window
         unsigned limit_to_write = min(next_line_offset - 1, cur_offset + state->x_offset + (state->x_total - 1));
-        for (unsigned i = cur_offset + state->x_offset; i < limit_to_write; ++i)
-            wprintw(win, "%c", state->text[i]);
-        wprintw(win, "\n");
+        unsigned start_offset = cur_offset + state->x_offset;
+        if (start_offset < limit_to_write) {
+            unsigned length_to_write = limit_to_write - start_offset;
+            memcpy(line_buffer, state->text + start_offset, length_to_write);
+            wprintw(win, "%.*s\n", length_to_write, line_buffer);
+        } else {
+            wprintw(win, "\n");
+        }
 
         cur_offset = next_line_offset;
         ++cur_drawed_line;
@@ -135,7 +141,9 @@ int main(int argc, char *argv[]) {
     state.text_length = file_length;
     state.x_offset = state.y_offset = 0;
     getmaxyx(win, state.y_total, state.x_total);
-    redraw_text(win, &state);
+
+    char line_buffer[state.x_total];
+    redraw_text(win, &state, line_buffer);
 
     // Main key dispatch loop
     for (int c = wgetch(win); c != 27; c = wgetch(win)) {
@@ -167,7 +175,7 @@ int main(int argc, char *argv[]) {
             default: break;
         }
         redraw_frame(frame, filename, state.y_offset, state.x_offset);
-        redraw_text(win, &state);
+        redraw_text(win, &state, line_buffer);
     }
 
     delwin(win);
