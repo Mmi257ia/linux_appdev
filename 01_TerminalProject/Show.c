@@ -180,7 +180,7 @@ int main(int argc, char *argv[]) {
                 else
                     state.x_offset = 0;
                 break;
-            default: break;
+            default: continue;
         }
         redraw_frame(frame, filename, state.y_offset, state.x_offset);
         redraw_text(win, &state, line_buffer);
