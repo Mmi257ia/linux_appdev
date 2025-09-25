@@ -9,6 +9,7 @@ int main(int argc, char *argv[]) {
               output("<DONE>");
      }
      else
-          usage(argv[0]);
+       //  usage(argv[0]);
+          usage("prog"); // for testing
        return 0;
 }
