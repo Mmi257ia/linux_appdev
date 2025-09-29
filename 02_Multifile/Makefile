@@ -9,10 +9,10 @@ all:    prog prog-a prog-so README test
 prog:	prog.o fun.o const.o
 
 prog-a:	prog.o liboutput_static.a
-	$(CC) $^ -o $@
+	$(CC) -L. $< -o $@ -loutput_static
 
 prog-so:	prog.o liboutput.so
-	$(CC) -L. $^ -o $@
+	$(CC) -L. $< -o $@ -loutput
 
 liboutput_static.a:	fun.o const.o
 	$(AR) -rcs $@ $^
