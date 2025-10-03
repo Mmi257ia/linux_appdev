@@ -34,7 +34,7 @@ TMPFILE_SHUFFLED=`mktemp`
 
 # Read stdin, convert it to UCS2, dump it to hex,
 # split by 2 bytes with spaces, then finally write it to $TMPFILE
-cat | iconv -t UCS2 | xxd -p -c 0 | sed 's/\([0-9A-Fa-f]\{4\}\)/& /g' > $TMPFILE
+iconv -t UCS2 | xxd -p -c 0 | sed 's/\([0-9A-Fa-f]\{4\}\)/& /g' > $TMPFILE
 
 # Annotate all symbols with their Y and X position in input,
 # split it so one symbol takes one line, write result to $TMPFILE_ANNOTATED
