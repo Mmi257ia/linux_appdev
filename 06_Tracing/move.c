@@ -19,14 +19,14 @@ static char *strerror_or_unknown(int err) {
 
 int main(int argc, char *argv[]) {
     char *SELF_NAME = argv[0];
-    char *infile_name = argv[1];
-    char *outfile_name = argv[2];
-    int err;
-    // Opening infile
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <source> <destination>\n", SELF_NAME);
         return EINVAL;
     }
+    char *infile_name = argv[1];
+    char *outfile_name = argv[2];
+    int err;
+    // Opening infile
     if (!strcmp(infile_name, outfile_name)) {
         fprintf(stderr, "%s: \"%s\" and \"%s\" are the same\n", SELF_NAME, infile_name, outfile_name);
         return EINVAL;
