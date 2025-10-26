@@ -9,7 +9,7 @@
 #define PRINT_ERROR(err, format, ...) do {                                      \
     err = errno;                                                                \
     char *err_string = strerror_or_unknown(err);                                \
-    fprintf(stderr, "%s: " format ": %s\n", SELF_NAME, __VA_ARGS__, err_string); \
+    fprintf(stderr, "%s: " format ": %s\n", SELF_NAME, __VA_ARGS__, err_string);\
 } while (0)
 
 static char *strerror_or_unknown(int err) {
