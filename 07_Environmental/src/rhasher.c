@@ -7,11 +7,13 @@
 
 #include <rhash.h>
 
-#ifdef HAVE_READLINE
-#include <readline/readline.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
 #endif
 
-#define SELF_NAME self_name
+#ifdef HAVE_LIBREADLINE
+#include <readline/readline.h>
+#endif
 
 #define PRINT_ERROR(format, ...) do {                                           \
     int err = errno;                                                            \
@@ -25,7 +27,7 @@ static char *strerror_or_unknown(int err) {
 }
 
 #define MAX_DIGEST_LEN 24 // 16 for MD5, 20 for SHA1, 24 for TTH
-#define MAX_DIGEST_STRING_LEN 48 // 32 for MD5, 40 for SHA1, 48 for TTH
+#define MAX_DIGEST_STRING_LEN 48 // 32 for MD5, 40 for SHA1, 48 for TTH (in hex; base64 is smaller)
 
 // Converts a string to hash type. Returns 0 on error.
 // Also converts the given string to upper case!
@@ -67,19 +69,18 @@ static int hash(char *out, char *in, bool str, enum rhash_ids hash_type, bool pr
 #define TOKEN_DELIMS " \n"
 
 int main(int argc, char *argv[]) {
-    char *SELF_NAME = argv[0];
-
-    rhash_library_init();
     char digest_string[MAX_DIGEST_STRING_LEN];
+    rhash_library_init();
 
     char *line = NULL;
     do {
-#ifdef HAVE_READLINE
+#ifdef HAVE_LIBREADLINE
         line = readline(">>> ");
         if (line == NULL)
             return 0;
 #else
         printf(">>> ");
+        line = NULL;
         size_t line_buf_size;
         ssize_t read_syms = getline(&line, &line_buf_size, stdin);
         if (read_syms == -1) {
