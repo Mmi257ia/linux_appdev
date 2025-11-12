@@ -13,6 +13,9 @@
 #ifndef PACKAGE
 #define PACKAGE "guesser"
 #endif
+#ifndef LOCALE_PATH
+#define LOCALE_PATH "."
+#endif
 
 // xgettext -k_ -c src/guesser.c -o guesser.pot; -> .pot, the template
 // msginit -l ru_RU.UTF-8; -> .po, the translation

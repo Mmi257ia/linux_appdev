@@ -5,8 +5,13 @@ AC_PREREQ([2.72])
 AC_INIT([Guesser], [1.0], [sportloto@mail.ru])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_REQUIRE_VERSION(0.23)
+
 AC_CONFIG_SRCDIR([src/guesser.c])
 AC_CONFIG_HEADERS([config.h])
+
+ALL_LINGUAS="ru"
 
 # Checks for programs.
 AC_PROG_CC
@@ -24,5 +29,5 @@ AC_TYPE_SSIZE_T
 # Checks for library functions.
 AC_CHECK_FUNCS([setlocale])
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile po/Makefile.in src/Makefile])
 AC_OUTPUT
