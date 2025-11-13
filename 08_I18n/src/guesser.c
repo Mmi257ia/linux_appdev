@@ -23,7 +23,6 @@
 // msgfmt ru.po -o ru/LC_MESSAGES/guesser.mo; -> .mo, the binary
 
 #define _(STR) gettext(STR)
-#define LOCALE_PATH "."
 
 #define A 1
 #define B 100

@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version:  08_I18n\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-13 02:23+0300\n"
+"Report-Msgid-Bugs-To: sportloto@mail.ru\n"
+"POT-Creation-Date: 2025-11-13 03:05+0300\n"
 "PO-Revision-Date: 2025-11-13 02:24+0300\n"
 "Last-Translator: Mikhail <sportloto@mail.ru>\n"
 "Language-Team: Russian <gnu@d07.ru>\n"
@@ -19,36 +19,35 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: src/guesser.c:24
+#: src/guesser.c:35
 msgid "Yes"
 msgstr "Да"
 
-#: src/guesser.c:25
+#: src/guesser.c:36
 msgid "No"
 msgstr "Нет"
 
-#. [a; b]
-#: src/guesser.c:28
+#: src/guesser.c:39
 #, c-format
 msgid "Guess a number between %d and %d.\n"
 msgstr "Загадайте число между %d и %d.\n"
 
-#: src/guesser.c:34
+#: src/guesser.c:45
 #, c-format
 msgid "Is the guessed number greater than %d? (%s/%s) "
 msgstr "Загаданное число больше %d? (%s/%s) "
 
-#: src/guesser.c:37
+#: src/guesser.c:48
 #, c-format
 msgid "Got the end of input or an error, aborting\n"
 msgstr "Получен конец ввода или ошибка, выключение\n"
 
-#: src/guesser.c:52
+#: src/guesser.c:63
 #, c-format
 msgid "Please enter just \"%s\" or just \"%s\"\n"
 msgstr "Пожалуйста, введите просто \"%s\" или просто \"%s\"\n"
 
-#: src/guesser.c:57
+#: src/guesser.c:68
 #, c-format
 msgid "You guessed %d!\n"
 msgstr "Вы загадали %d!\n"
