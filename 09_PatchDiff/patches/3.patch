@@ -1,0 +1,177 @@
+--- labyrinth.c	2025-11-23 01:54:46.828501396 +0300
++++ better_labyrinth.c	2025-11-23 01:58:56.533019711 +0300
+@@ -6,7 +6,7 @@
+ #include <stdbool.h>
+ #include <errno.h>
+ 
+-#define CELL(matrix, y, x) ((matrix)[6 * (y) + (x)])
++#define CELL(matrix, size, y, x) ((matrix)[(size) * (y) + (x)])
+ 
+ // State of a cell: bitmask where in lower 4 bits: if the bit is set,
+ // then there is a wall in this direction
+@@ -19,43 +19,42 @@
+ #define VISITED (1 << 4)
+ 
+ // Generate initial labyrinth
+-uint8_t *alloc_labyrinth() {
+-    uint8_t *labyrinth = malloc(6 * 6 * sizeof(*labyrinth));
++uint8_t *alloc_labyrinth(size_t size) {
++    uint8_t *labyrinth = malloc(size * size * sizeof(*labyrinth));
+     if (labyrinth == NULL)
+         return NULL;
+-    for (int y = 0; y < 6; y++)
+-        for (int x = 0; x < 6; x++)
+-            CELL(labyrinth, y, x) = RIGHT | UP | LEFT | DOWN;
++    for (int y = 0; y < size; y++)
++        for (int x = 0; x < size; x++)
++            CELL(labyrinth, size, y, x) = RIGHT | UP | LEFT | DOWN;
+     return labyrinth;
+ }
+ 
+ // return -1 if all cells are visited
+-int get_non_visited_cell(uint8_t *labyrinth) {
+-    for (int y = 0; y < 6; y++)
+-        for (int x = 0; x < 6; x++)
+-            if (!(CELL(labyrinth, y, x) & VISITED))
+-                return y * 6 + x;
++int get_non_visited_cell(uint8_t *labyrinth, size_t size) {
++    for (int y = 0; y < size; y++)
++        for (int x = 0; x < size; x++)
++            if (!(CELL(labyrinth, size, y, x) & VISITED))
++                return y * size + x;
+     return -1;
+ }
+ 
+-void gen_labyrinth(uint8_t *labyrinth) {
+-    int seed = 1231242;
+-    int total_walls = 5*6 * 2;
++void gen_labyrinth(uint8_t *labyrinth, size_t size, unsigned seed) {
++    int total_walls = (size - 1) * size * 2;
+     int broken_walls = 0;
+     do {
+         srandom(seed++);
+         int cur_cell = 0;
+         do {
+             do {
+-                int y = cur_cell / 6;
+-                int x = cur_cell % 6;
+-                CELL(labyrinth, y, x) |= VISITED;
+-                if (y == 5 && x == 5) // can't go anywhere
++                int y = cur_cell / size;
++                int x = cur_cell % size;
++                CELL(labyrinth, size, y, x) |= VISITED;
++                if (y == size - 1 && x == size - 1) // can't go anywhere
+                     break;
+                 int direction; // 1 << (0, 1, 2, 3 <-> right, up, left, down)
+-                if (y == 5) { // can't go down
++                if (y == size - 1) { // can't go down
+                     direction = RIGHT;
+-                } else if (x == 5)  { // can't go right
++                } else if (x == size - 1)  { // can't go right
+                     direction = DOWN;
+                 } else { // random direction
+                     if (random() % 2 == 0)
+@@ -64,51 +63,80 @@
+                         direction = DOWN;
+                 }
+                 
+-                CELL(labyrinth, y, x) &= ~direction;
++                CELL(labyrinth, size, y, x) &= ~direction;
+                 if (direction == RIGHT) {
+                     x++;
+                     cur_cell++;
+-                    CELL(labyrinth, y, x) &= ~LEFT;
++                    CELL(labyrinth, size, y, x) &= ~LEFT;
+                 } else { // direction == DOWN
+                     y++;
+-                    cur_cell += 6;
+-                    CELL(labyrinth, y, x) &= ~UP;
++                    cur_cell += size;
++                    CELL(labyrinth, size, y, x) &= ~UP;
+                 }
+                 broken_walls++;
+-                if (CELL(labyrinth, y, x) & VISITED)
++                if (CELL(labyrinth, size, y, x) & VISITED)
+                     break;
+-            } while (cur_cell != 35);
+-            cur_cell = get_non_visited_cell(labyrinth);
++            } while (cur_cell != size*size - 1);
++            cur_cell = get_non_visited_cell(labyrinth, size);
+         } while (cur_cell != -1);
+         // printf("%lf\n", (double)broken_walls / total_walls);
+     } while ((double)broken_walls / total_walls > 0.85);
+ }
+ 
+-void print_labyrinth(uint8_t *labyrinth) {
+-    printf("#############\n");
+-    for (int y = 0; y < 6; y++) {
+-        printf("#.");
+-        for (int x = 1; x < 6; x++) {
+-            char wall = CELL(labyrinth, y, x) & LEFT ? '#' : '.';
+-            printf("%c.", wall);
++void print_labyrinth(uint8_t *labyrinth, size_t size, char passage, char wall) {
++    for (int x = 0; x < size; x++)
++        printf("%c%c", wall, wall);
++    printf("%c\n", wall);
++    for (int y = 0; y < size; y++) {
++        printf("%c%c", wall, passage);
++        for (int x = 1; x < size; x++) {
++            char wall_or_passage = CELL(labyrinth, size, y, x) & LEFT ? wall : passage;
++            printf("%c%c", wall_or_passage, passage);
+         }
+-        printf("#\n");
+-        for (int x = 0; x < 6; x++) {
+-            char wall = CELL(labyrinth, y, x) & DOWN ? '#' : '.';
+-            printf("#%c", wall);
++        printf("%c\n", wall);
++        for (int x = 0; x < size; x++) {
++            char wall_or_passage = CELL(labyrinth, size, y, x) & DOWN ? wall : passage;
++            printf("%c%c", wall, wall_or_passage);
+         }
+-        printf("#\n");
++        printf("%c\n", wall);
+     }
+ }
+ 
+-int main() {
+-    uint8_t *labyrinth = alloc_labyrinth();
++int main(int argc, char *argv[]) {
++    if (argc != 4) {
++        fprintf(stderr, "Usage: %s <random seed> '<passage symbol><wall symbol>' <labyrinth size>\n", argv[0]);
++        exit(1);
++    }
++    char *random_seed_argv = argv[1];
++    char *syms_argv = argv[2];
++    char *size_argv = argv[3];
++
++    char *endptr = NULL;
++    long seed = strtol(random_seed_argv, &endptr, 0);
++    if (endptr == random_seed_argv || *endptr != '\0') {
++        fprintf(stderr, "Wrong random seed specified: \"%s\"\n", random_seed_argv);
++        exit(1);
++    }
++    endptr = NULL;
++    int syms_len = strlen(syms_argv);
++    if (syms_len != 2) {
++        fprintf(stderr, "The first parameter must consist of 2 characters, got %d\n", syms_len);
++        exit(1);
++    }
++    long size = strtol(size_argv, &endptr, 0);
++    if (endptr == size_argv || *endptr != '\0' || size < 1) {
++        fprintf(stderr, "Wrong labyrinth size specified: \"%s\"\n", size_argv);
++        exit(1);
++    }
++
++    uint8_t *labyrinth = alloc_labyrinth(size);
+     if (labyrinth == NULL) {
+         fprintf(stderr, "Failed to alloc labyrinth: %s\n", strerror(errno));
+         exit(1);
+     }
+-    gen_labyrinth(labyrinth);
+-    print_labyrinth(labyrinth);
++    gen_labyrinth(labyrinth, size, seed);
++    print_labyrinth(labyrinth, size, syms_argv[0], syms_argv[1]);
++
+     free(labyrinth);
+     return 0;
+ }
