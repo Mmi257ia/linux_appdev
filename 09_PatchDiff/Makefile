@@ -1,17 +1,19 @@
 LABYRINTH_BASE = labyrinth
 PATCHES_DIR = patches
-PATCHES = $(shell ls -1 $(PATCHES_DIR) | grep -Eo '^[^.]*')
-LABYRINTHS = $(addprefix $(LABYRINTH_BASE), $(PATCHES))
 TRASH = *.o
 
 .PHONY: all run clean
 
-.SECONDARY: $(LABYRINTH_BASE)%.c
+all: $(LABYRINTH_BASE) $(LABYRINTH_BASE)1 $(LABYRINTH_BASE)2 $(LABYRINTH_BASE)3 run
 
-all: $(LABYRINTH_BASE) $(LABYRINTHS) run
+$(LABYRINTH_BASE)1.c: $(LABYRINTH_BASE).c $(PATCHES_DIR)/1.patch
+	patch $< -o $@ < $(word 2, $^)
 
-$(LABYRINTH_BASE)%.c: $(PATCHES_DIR)/%.patch
-	patch $(LABYRINTH_BASE).c -o $@ < $<
+$(LABYRINTH_BASE)2.c: $(LABYRINTH_BASE)1.c $(PATCHES_DIR)/2.patch
+	patch $< -o $@ < $(word 2, $^)
+
+$(LABYRINTH_BASE)3.c: $(LABYRINTH_BASE)2.c $(PATCHES_DIR)/3.patch
+	patch $< -o $@ < $(word 2, $^)
 
 run: $(LABYRINTHS)
 	./$(LABYRINTH_BASE)
@@ -22,4 +24,4 @@ run: $(LABYRINTHS)
 	./$(LABYRINTH_BASE)3 42 ' X' 5
 
 clean:
-	rm -f $(TRASH) $(LABYRINTHS) $(LABYRINTH_BASE) $(addsuffix .c, $(LABYRINTHS))
+	rm -f $(TRASH) $(LABYRINTH_BASE) $(LABYRINTH_BASE)? $(LABYRINTH_BASE)?.c
