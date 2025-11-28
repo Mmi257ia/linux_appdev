@@ -12,6 +12,12 @@ AC_CONFIG_HEADERS([config.h])
 # Checks for programs.
 AC_PROG_CC
 
+# Checks for check
+PKG_CHECK_MODULES([CHECK], [check])
+
+AC_SUBST(CK_VERBOSITY, verbose) # default
+AC_ARG_VAR(CK_VERBOSITY, [Default: "verbose". Can also be "silent", "minimal" or "normal"])
+
 # Checks for libraries.
 
 # Checks for header files.
@@ -29,5 +35,6 @@ AC_FUNC_REALLOC
 AC_CHECK_FUNCS([gettimeofday strtoull])
 
 AC_CONFIG_FILES([Makefile
-                 src/Makefile])
+                 src/Makefile
+                 tests/Makefile])
 AC_OUTPUT
