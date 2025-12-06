@@ -1,0 +1,5 @@
+SUBDIRS = src po
+
+# Use this to clean all, including the generates made by autoconf
+clean-all: clean
+	git clean -xdf .
