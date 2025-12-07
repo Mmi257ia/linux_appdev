@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  08_I18n\n"
 "Report-Msgid-Bugs-To: sportloto@mail.ru\n"
-"POT-Creation-Date: 2025-12-07 20:47+0300\n"
+"POT-Creation-Date: 2025-12-07 21:28+0300\n"
 "PO-Revision-Date: 2025-11-13 02:24+0300\n"
 "Last-Translator: Mikhail <sportloto@mail.ru>\n"
 "Language-Team: Russian <gnu@d07.ru>\n"
@@ -19,85 +19,85 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: src/guesser.c:159
+#: src/guesser.c:167
 #, c-format
 msgid "Number %d is too big to convert it to Roman\n"
 msgstr "Число %d слишком велико для перевода в римскую систему счисления\n"
 
-#: src/guesser.c:173
+#: src/guesser.c:188
 #, c-format
 msgid "Can't convert character %c from Roman to decimal number\n"
 msgstr ""
 "Невозможно перевести букву %c из римской системы счисления в десятичную\n"
 
-#: src/guesser.c:204
+#: src/guesser.c:225
 msgid "Usage:"
 msgstr "Использование:"
 
-#: src/guesser.c:205
+#: src/guesser.c:226
 msgid " [OPTION...]"
 msgstr " [ПАРАМЕТРЫ...]"
 
-#: src/guesser.c:206
+#: src/guesser.c:227
 msgid "Give a short usage message"
 msgstr "Вывести короткую подсказку"
 
-#: src/guesser.c:207
+#: src/guesser.c:228
 msgid "Give this help list"
 msgstr "Вывести эту подсказку"
 
-#: src/guesser.c:208
+#: src/guesser.c:229
 msgid "Use roman numbers"
 msgstr "Использовать римские цифры"
 
-#: src/guesser.c:209
+#: src/guesser.c:230
 msgid "Numbers guesser\vSupported languages: English, Russian."
 msgstr "Угадыватель чисел\vПоддерживаемые языки: английский, русский."
 
-#: src/guesser.c:221
+#: src/guesser.c:242
 msgid "Yes"
 msgstr "Да"
 
-#: src/guesser.c:222
+#: src/guesser.c:243
 msgid "No"
 msgstr "Нет"
 
-#: src/guesser.c:226
+#: src/guesser.c:247
 #, c-format
 msgid "Guess a number between %s and %s.\n"
 msgstr "Загадайте число между %s и %s.\n"
 
-#: src/guesser.c:228
+#: src/guesser.c:249
 #, c-format
 msgid "Guess a number between %d and %d.\n"
 msgstr "Загадайте число между %d и %d.\n"
 
-#: src/guesser.c:235
+#: src/guesser.c:256
 #, c-format
 msgid "Is the guessed number greater than %s? (%s/%s) "
 msgstr "Загаданное число больше %s? (%s/%s) "
 
-#: src/guesser.c:237
+#: src/guesser.c:258
 #, c-format
 msgid "Is the guessed number greater than %d? (%s/%s) "
 msgstr "Загаданное число больше %d? (%s/%s) "
 
-#: src/guesser.c:240
+#: src/guesser.c:261
 #, c-format
 msgid "Got the end of input or an error, aborting\n"
 msgstr "Получен конец ввода или ошибка, выключение\n"
 
-#: src/guesser.c:255
+#: src/guesser.c:276
 #, c-format
 msgid "Please enter just \"%s\" or just \"%s\"\n"
 msgstr "Пожалуйста, введите просто \"%s\" или просто \"%s\"\n"
 
-#: src/guesser.c:261
+#: src/guesser.c:282
 #, c-format
 msgid "You guessed %s!\n"
 msgstr "Вы загадали %s!\n"
 
-#: src/guesser.c:263
+#: src/guesser.c:284
 #, c-format
 msgid "You guessed %d!\n"
 msgstr "Вы загадали %d!\n"

@@ -25,7 +25,9 @@
 
 #define _(STR) gettext(STR)
 
+/// \brief The lower bound of guessing.
 #define A 1
+/// \brief The upper bound of guessing.
 #define B 100
 
 static struct argp_option options[] = {
@@ -52,6 +54,12 @@ static char doc[] = "Numbers guesser\vSupported languages: English, Russian.";
 
 static struct argp argp = { options, parse_opt, 0, doc, 0, 0, PACKAGE };
 
+
+/// \brief Convert an integer to Roman digits.
+/// Convert an integer to Roman digits. Conversion is just a search in a hard-coded table.
+/// Changing possible input range ([#A; #B]) will require to update the table.
+/// \param decimal Decimal number to convert. Must be in [#A, #B].
+/// \return String with Roman number.
 char *decimal_to_roman(int decimal) {
     static char *roman[B - A + 1] = {
         [1-A] = "I",
@@ -162,6 +170,11 @@ char *decimal_to_roman(int decimal) {
     return roman[decimal - A];
 }
 
+/// \brief Convert a single-character Roman digit to integer.
+/// Convert a single-character Roman digit to integer.
+/// Supported digits: I, V, X, L, C, D, M.
+/// \param roman Digit to convert.
+/// \return Converted integer.
 static int roman_digit_to_decimal(char roman) {
     switch (roman) {
         case 'M': return 1000;
@@ -177,6 +190,10 @@ static int roman_digit_to_decimal(char roman) {
     }
 }
 
+/// \brief Convert a number in Roman digits to integer.
+/// Convert a number in Roman digits to integer. Uses roman_digit_to_decimal().
+/// \param decimal Decimal number to convert. Must be in [A, B].
+/// \return String with Roman number.
 int roman_to_decimal(char *roman) {
     int res = 0;
     int i = 0;
@@ -201,7 +218,9 @@ int roman_to_decimal(char *roman) {
     return res;
 }
 
-// stub for xgettext to list these strings in .pot
+/// \brief A stub for `xgettext` to list help strings in .pot.
+/// A stub for `xgettext` to list help strings in .pot.
+/// Does nothing, should not be called.
 __attribute__((unused)) static void __gettext_stub() {
     _("Usage:");
     _(" [OPTION...]");
