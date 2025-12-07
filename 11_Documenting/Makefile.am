@@ -12,6 +12,12 @@ $(DX_DOCDIR)/$(PACKAGE).tag: main_page_for_doxygen.c
 
 .INTERMEDIATE: main_page_for_doxygen.c
 
+guesser.1:
+	$(MAKE) -C src guesser
+	LC_ALL=C help2man -s 1 --version-string="$(VERSION)" ./src/guesser > $@
+
+man1_MANS = guesser.1
+
 all-local: doxygen-doc
 
 install-data-local:

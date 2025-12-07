@@ -16,6 +16,9 @@ ALL_LINGUAS="ru"
 
 # Checks for programs.
 AC_PROG_CC
+AC_CHECK_PROG(HELP2MAN_CHECK, help2man, yes)
+AS_IF([test x"$HELP2MAN_CHECK" != x"yes"],
+      [AC_MSG_ERROR([help2man not found, please install it.])])
 
 # Checks for libraries.
 
