@@ -2,8 +2,9 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.72])
-AC_INIT([Guesser], [1.0], [sportloto@mail.ru])
+AC_INIT([Guesser], [1.0], [sportloto@mail.ru], [guesser])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
+DX_INIT_DOXYGEN([guesser])
 
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_REQUIRE_VERSION(0.23)
@@ -29,5 +30,5 @@ AC_TYPE_SSIZE_T
 # Checks for library functions.
 AC_CHECK_FUNCS([setlocale])
 
-AC_CONFIG_FILES([Makefile po/Makefile.in src/Makefile])
+AC_CONFIG_FILES([Makefile po/Makefile.in src/Makefile Doxyfile])
 AC_OUTPUT
