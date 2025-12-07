@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <libintl.h>
 #include <locale.h>
+#include <argp.h>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -26,6 +27,30 @@
 
 #define A 1
 #define B 100
+
+static struct argp_option options[] = {
+    {"roman", 'r', 0, 0, "Use roman numbers"},
+};
+
+struct args {
+    bool roman;
+};
+
+static error_t parse_opt(int key, char *arg, struct argp_state *state) {
+    struct args *args = state->input;
+    switch (key) {
+        case 'r':
+            args->roman = true;
+            break;
+        default:
+            return ARGP_ERR_UNKNOWN;
+    }
+    return 0;
+}
+
+static char doc[] = "Numbers guesser\vSupported languages: English, Russian.";
+
+static struct argp argp = { options, parse_opt, 0, doc, 0, 0, PACKAGE };
 
 char *decimal_to_roman(int decimal) {
     static char *roman[B - A + 1] = {
