@@ -131,7 +131,7 @@ char *decimal_to_roman(int decimal) {
         [100-A] = "C",
     };
     if (decimal > B || decimal < A) {
-        fprintf(stderr, "Number %d is too big to convert it to Roman\n", decimal);
+        fprintf(stderr, _("Number %d is too big to convert it to Roman\n"), decimal);
         return NULL;
     }
     return roman[decimal - A];
@@ -145,7 +145,7 @@ static int roman_digit_to_decimal(char roman) {
         case 'V': return 5;
         case 'I': return 1;
         default:
-            fprintf(stderr, "Can't convert character %c from Roman to decimal number\n", roman);
+            fprintf(stderr, _("Can't convert character %c from Roman to decimal number\n"), roman);
             return -1;
     }
 }
@@ -174,22 +174,42 @@ int roman_to_decimal(char *roman) {
     return res;
 }
 
-int main() {
+// stub for xgettext to list these strings in .pot
+__attribute__((unused)) static void __gettext_stub() {
+    _("Usage:");
+    _(" [OPTION...]");
+    _("Give a short usage message");
+    _("Give this help list");
+    _("Use roman numbers");
+    _("Numbers guesser\vSupported languages: English, Russian.");
+}
+
+int main(int argc, char *argv[]) {
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALE_PATH);
     textdomain(PACKAGE);
+
+    struct args args = { false };
+    argp_parse(&argp, argc, argv, 0, 0, &args);
+    bool roman = args.roman;
 
     char * yes_str = _("Yes");
     char * no_str = _("No");
     
     int a = A, b = B; // [a; b]
-    printf(_("Guess a number between %d and %d.\n"), a, b);
+    if (roman)
+        printf(_("Guess a number between %s and %s.\n"), decimal_to_roman(a), decimal_to_roman(b));
+    else
+        printf(_("Guess a number between %d and %d.\n"), a, b);
 
     int cur_mid = (a + b) / 2;
     char *line = NULL;
     size_t line_size;
     while (b - a > 0) {
-        printf(_("Is the guessed number greater than %d? (%s/%s) "), cur_mid, yes_str, no_str);
+        if (roman)
+            printf(_("Is the guessed number greater than %s? (%s/%s) "), decimal_to_roman(cur_mid), yes_str, no_str);
+        else
+            printf(_("Is the guessed number greater than %d? (%s/%s) "), cur_mid, yes_str, no_str);
         ssize_t read_syms = getline(&line, &line_size, stdin);
         if (read_syms == -1) {
             fprintf(stderr, _("Got the end of input or an error, aborting\n"));
@@ -212,6 +232,9 @@ int main() {
         }
     }
     free(line);
-    printf(_("You guessed %d!\n"), a);
+    if (roman)
+        printf(_("You guessed %s!\n"), decimal_to_roman(a));
+    else
+        printf(_("You guessed %d!\n"), a);
     return 0;
 }
