@@ -164,6 +164,8 @@ char *decimal_to_roman(int decimal) {
 
 static int roman_digit_to_decimal(char roman) {
     switch (roman) {
+        case 'M': return 1000;
+        case 'D': return 500;
         case 'C': return 100;
         case 'L': return 50;
         case 'X': return 10;
