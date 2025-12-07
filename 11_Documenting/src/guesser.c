@@ -6,6 +6,8 @@
 #include <locale.h>
 #include <argp.h>
 
+/// \file guesser.c
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -25,9 +27,10 @@
 
 #define _(STR) gettext(STR)
 
-/// \brief The lower bound of guessing.
+/// The lower bound of guessing.
 #define A 1
-/// \brief The upper bound of guessing.
+
+/// The upper bound of guessing.
 #define B 100
 
 static struct argp_option options[] = {
@@ -50,14 +53,16 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
     return 0;
 }
 
-static char doc[] = "Numbers guesser\vSupported languages: English, Russian.";
+static char doc[] = "Numbers guesser.\vSupported languages: English, Russian.";
 
 static struct argp argp = { options, parse_opt, 0, doc, 0, 0, PACKAGE };
 
 
 /// \brief Convert an integer to Roman digits.
-/// Convert an integer to Roman digits. Conversion is just a search in a hard-coded table.
+///
+/// Convert an integer \p decimal to Roman digits. Conversion is just a search in a hard-coded table.
 /// Changing possible input range ([#A; #B]) will require to update the table.
+///
 /// \param decimal Decimal number to convert. Must be in [#A, #B].
 /// \return String with Roman number.
 char *decimal_to_roman(int decimal) {
@@ -171,8 +176,10 @@ char *decimal_to_roman(int decimal) {
 }
 
 /// \brief Convert a single-character Roman digit to integer.
-/// Convert a single-character Roman digit to integer.
+///
+/// Convert a single-character Roman digit \p roman to integer.
 /// Supported digits: I, V, X, L, C, D, M.
+///
 /// \param roman Digit to convert.
 /// \return Converted integer.
 static int roman_digit_to_decimal(char roman) {
@@ -191,8 +198,10 @@ static int roman_digit_to_decimal(char roman) {
 }
 
 /// \brief Convert a number in Roman digits to integer.
-/// Convert a number in Roman digits to integer. Uses roman_digit_to_decimal().
-/// \param decimal Decimal number to convert. Must be in [A, B].
+///
+/// Convert a number in Roman digits \p roman to integer. Uses roman_digit_to_decimal().
+///
+/// \param roman The number in Roman digits to convert.
 /// \return String with Roman number.
 int roman_to_decimal(char *roman) {
     int res = 0;
@@ -218,16 +227,14 @@ int roman_to_decimal(char *roman) {
     return res;
 }
 
-/// \brief A stub for `xgettext` to list help strings in .pot.
-/// A stub for `xgettext` to list help strings in .pot.
-/// Does nothing, should not be called.
 __attribute__((unused)) static void __gettext_stub() {
     _("Usage:");
     _(" [OPTION...]");
     _("Give a short usage message");
     _("Give this help list");
+    // above need to be synced with arg description and doc
     _("Use roman numbers");
-    _("Numbers guesser\vSupported languages: English, Russian.");
+    _("Numbers guesser.\vSupported languages: English, Russian.");
 }
 
 int main(int argc, char *argv[]) {
