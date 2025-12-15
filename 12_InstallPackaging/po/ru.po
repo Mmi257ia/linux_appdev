@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: matrix_ops_runner\n"
 "Report-Msgid-Bugs-To: sportloto@mail.ru\n"
-"POT-Creation-Date: 2025-12-15 16:50+0300\n"
+"POT-Creation-Date: 2025-12-16 01:03+0300\n"
 "PO-Revision-Date: 2025-12-15 04:07+0300\n"
 "Last-Translator: Mikhail <sportloto@mail.ru>\n"
 "Language-Team: Russian <gnu@d07.ru>\n"
@@ -19,113 +19,113 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: src/matrix_ops_runner.c:46
+#: src/matrix_ops_runner.c:85
 msgid "no files were specified"
 msgstr "никакие файлы не были указаны"
 
-#: src/matrix_ops_runner.c:49
+#: src/matrix_ops_runner.c:88
 msgid "just 1 of 3 files specified"
 msgstr "указан лишь 1 из 3 файлов"
 
-#: src/matrix_ops_runner.c:52
+#: src/matrix_ops_runner.c:91
 msgid "just 2 of 3 files specified"
 msgstr "указаны лишь 2 из 3 файлов"
 
-#: src/matrix_ops_runner.c:55
+#: src/matrix_ops_runner.c:94
 #, c-format
 msgid "more that 3 files specified, tail is: \"%s\""
 msgstr "указано более 3 файлов, хвост: \"%s\""
 
-#: src/matrix_ops_runner.c:69
+#: src/matrix_ops_runner.c:108
 #, c-format
 msgid "unsupported input type \"%s\""
 msgstr "неподдерживаемый тип входных матриц: \"%s\""
 
-#: src/matrix_ops_runner.c:76
+#: src/matrix_ops_runner.c:115
 msgid "input type is not specified"
 msgstr "тип входных матриц не задан"
 
-#: src/matrix_ops_runner.c:78
+#: src/matrix_ops_runner.c:117
 msgid "input/output files are not specified"
 msgstr "входные/выходные файлы не заданы"
 
-#: src/matrix_ops_runner.c:104 src/matrix_ops_runner.c:155
+#: src/matrix_ops_runner.c:151 src/matrix_ops_runner.c:214
 #, c-format
 msgid "%s: error while opening file %s\n"
 msgstr "%s: ошибка при открытии файла %s\n"
 
-#: src/matrix_ops_runner.c:110
+#: src/matrix_ops_runner.c:157
 #, c-format
 msgid "%s: error while reading matrix height from file %s\n"
 msgstr "%s: ошибка при чтении высоты матрицы из файла %s\n"
 
-#: src/matrix_ops_runner.c:115
+#: src/matrix_ops_runner.c:162
 #, c-format
 msgid "%s: error while reading matrix width from file %s\n"
 msgstr "%s: ошибка при чтении ширины матрицы из файла %s\n"
 
-#: src/matrix_ops_runner.c:123
+#: src/matrix_ops_runner.c:170
 #, c-format
 msgid "%s: error while allocating %lu bytes for matrix from file %s\n"
 msgstr "%s: ошибка при выделении %lu байт под матрицу из файла %s\n"
 
-#: src/matrix_ops_runner.c:161 src/matrix_ops_runner.c:166
+#: src/matrix_ops_runner.c:220 src/matrix_ops_runner.c:225
 #, c-format
 msgid "%s: error while writing matrix height to file %s\n"
 msgstr "%s: ошибка при записи высоты матрицы в файл %s\n"
 
-#: src/matrix_ops_runner.c:173
+#: src/matrix_ops_runner.c:232
 #, c-format
 msgid "%s: could not write all %lu bytes to file %s\n"
 msgstr "%s: не получилось записать все %lu байт в файл %s\n"
 
-#: src/matrix_ops_runner.c:204
+#: src/matrix_ops_runner.c:263
 #, c-format
 msgid ""
 "%s: width of the left multiplier is %lu, but the height of the right one is "
 "%lu!\n"
 msgstr "%s: ширина левого множителя -- %lu, но высота правого -- %lu!\n"
 
-#: src/matrix_ops_runner.c:219
+#: src/matrix_ops_runner.c:278
 #, c-format
 msgid ""
 "%s: height of the left multiplier is %lu, but the height of the output is "
 "%lu!\n"
 msgstr "%s: высота левого множителя -- %lu, но высота результата -- %lu!\n"
 
-#: src/matrix_ops_runner.c:227
+#: src/matrix_ops_runner.c:286
 #, c-format
 msgid ""
 "%s: width of the right multiplier is %lu, but the width of the output is "
 "%lu!\n"
 msgstr "%s: ширина правого множителя -- %lu, но ширина результата -- %lu!\n"
 
-#: src/matrix_ops_runner.c:242
+#: src/matrix_ops_runner.c:301
 #, c-format
 msgid "%s: error while allocating %lu bytes for output matrix\n"
 msgstr "%s: ошибка при выделении %lu байт под выходную матрицу\n"
 
-#: src/matrix_ops_runner.c:276
+#: src/matrix_ops_runner.c:335
 msgid "Usage:"
 msgstr "Использование:"
 
-#: src/matrix_ops_runner.c:277
+#: src/matrix_ops_runner.c:336
 msgid " [OPTION...]"
 msgstr " [ПАРАМЕТР...]"
 
-#: src/matrix_ops_runner.c:278
+#: src/matrix_ops_runner.c:337
 msgid "Give a short usage message"
 msgstr "Вывести короткую подсказку"
 
-#: src/matrix_ops_runner.c:279
+#: src/matrix_ops_runner.c:338
 msgid "Give this help list"
 msgstr "Вывести эту подсказку"
 
-#: src/matrix_ops_runner.c:280
+#: src/matrix_ops_runner.c:339
 msgid "Print program version"
 msgstr "Вывести версию программы"
 
-#: src/matrix_ops_runner.c:281
+#: src/matrix_ops_runner.c:340
 msgid ""
 "Mandatory or optional arguments to long options are also mandatory or "
 "optional for any corresponding short options."
@@ -133,23 +133,23 @@ msgstr ""
 "Обязательные или необязательные аргументы к длинным опциям также обязательны "
 "или необязательны для соответствующих коротких опций."
 
-#: src/matrix_ops_runner.c:283
+#: src/matrix_ops_runner.c:342
 #, c-format
 msgid "Try `%s --help' or `%s --usage' for more information.\n"
 msgstr "Введите `%s --help' или `%s --usage' для подробностей.\n"
 
-#: src/matrix_ops_runner.c:285
+#: src/matrix_ops_runner.c:344
 msgid ""
 "Specify input type. Currently supported: `i8`, `f32` and `f64`. [REQUIRED]"
 msgstr ""
 "Задать тип входных матриц. На данный момент поддерживаются: `i8`, `f32` и "
 "`f64`. [ОБЯЗАТЕЛЕН]"
 
-#: src/matrix_ops_runner.c:286
+#: src/matrix_ops_runner.c:345
 msgid "Binary files with inputs and outputs (comma-separated) [REQUIRED]"
 msgstr "Бинарные файлы со входами и выходами (разделены запятыми) [ОБЯЗАТЕЛЕН]"
 
-#: src/matrix_ops_runner.c:287
+#: src/matrix_ops_runner.c:346
 msgid ""
 "Matrix operations runner.\vThe only supported operation is matrix "
 "multiplication. Supported types: i8 x i8 -> i32, f32 x f32 -> f32, f64 x f64 "

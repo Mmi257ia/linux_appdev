@@ -1,3 +1,42 @@
+/// \mainpage libmatrixops and its runner
+/// 
+/// \section libmatrixops
+/// A library for matrix operations. Only matrix multiplication
+/// is supported now.  
+/// Refer to matrixops.h for more information.
+///
+/// \section runner Matrix ops runner
+/// A simple program that is able to run matrix multiplication
+/// from libmatrixops. Supports reading input matrices and writing
+/// output matrices from/in binary files of a certain simple format.  
+/// Refer to matrix_ops_runner.c for more information.
+///
+/// \section build Build
+/// `$ autoreconf -vi`  
+/// `$ ./configure [--prefix=PREFIX]`  
+/// `$ make`
+///
+/// \subsection install Install
+/// `$ make install`
+///
+/// \subsection uninstall Uninstall
+/// `$ make uninstall`
+///
+/// \subsection tests Run tests
+/// `$ make check || make check-tests-logs`
+///
+/// \subsection server Set up Doxygen server
+/// `$ make http`
+///
+/// \section usage Use matrix_ops_runner
+/// `$ matrix_ops_runner -t <data type> -f <left input file name>,<right input file name>,<output file name>`  
+/// Refer to `matrix_ops_runner --help` or `man 1 matrix_ops_runner`
+/// for more info.
+
+
+/// \file matrix_ops_runner.c
+/// A driver to run matrix multiplication from libmatrixops.
+
 // #include <matrixops.h>
 #include "matrixops.h"
 
@@ -88,10 +127,18 @@ static char doc[] = "Matrix operations runner.\vThe only supported operation is 
 
 static struct argp argp = { options, parse_opt, 0, doc, 0, 0, PACKAGE };
 
-#define SELF_NAME self_name
-
-// return NULL on error
-static void *read_matrix_from_bin(size_t *h, size_t *w, char *file_name, int type, char *SELF_NAME) {
+/// \brief Reads a matrix from a binary file.
+///
+/// Reads a matrix with elements of \p type from a binary file, where the first 8 bytes
+/// are its height, then 8 bytes are its width, then lies the content in row-major layout.
+///
+/// \param h Pointer to write height to.
+/// \param w Pointer to write width to.
+/// \param file_name Name of the file.
+/// \param type Matrix elements type.
+/// \param self_name Name of the current program.
+/// \return Pointer to malloc()'ed buffer with the matrix, of `NULL` in case of an error.
+static void *read_matrix_from_bin(size_t *h, size_t *w, char *file_name, int type, char *self_name) {
     size_t elt_size = type == i8 ? 1 :
                      (type == i32 ? 4 :
                      (type == f32 ? 4 :
@@ -101,18 +148,18 @@ static void *read_matrix_from_bin(size_t *h, size_t *w, char *file_name, int typ
     // Open file
     FILE *f = fopen(file_name, "rb");
     if (f == NULL) {
-        fprintf(stderr, _("%s: error while opening file %s\n"), SELF_NAME, file_name);
+        fprintf(stderr, _("%s: error while opening file %s\n"), self_name, file_name);
         return NULL;
     }
 
     // Read shape
     if (fread(h, sizeof(size_t), 1, f) != 1) {
-        fprintf(stderr, _("%s: error while reading matrix height from file %s\n"), SELF_NAME, file_name);
+        fprintf(stderr, _("%s: error while reading matrix height from file %s\n"), self_name, file_name);
         fclose(f);
         return NULL;
     }
     if (fread(w, sizeof(size_t), 1, f) != 1) {
-        fprintf(stderr, _("%s: error while reading matrix width from file %s\n"), SELF_NAME, file_name);
+        fprintf(stderr, _("%s: error while reading matrix width from file %s\n"), self_name, file_name);
         fclose(f);
         return NULL;
     }
@@ -121,7 +168,7 @@ static void *read_matrix_from_bin(size_t *h, size_t *w, char *file_name, int typ
     void *matrix = malloc(elt_size * (*h)*(*w));
     if (matrix == NULL) {
         fprintf(stderr, _("%s: error while allocating %lu bytes "
-                          "for matrix from file %s\n"), SELF_NAME, elt_size * (*h)*(*w), file_name);
+                          "for matrix from file %s\n"), self_name, elt_size * (*h)*(*w), file_name);
         fclose(f);
         return NULL;
     }
@@ -142,7 +189,19 @@ static void *read_matrix_from_bin(size_t *h, size_t *w, char *file_name, int typ
     return matrix;
 }
 
-static int write_matrix_bin(size_t h, size_t w, void *matrix, char *file_name, int type, char *SELF_NAME) {
+/// \brief Writes a matrix to a binary file.
+///
+/// Writes a matrix with elements of \p type to a binary file, where the first 8 bytes
+/// are its height, then 8 bytes are its width, then lies the content in row-major layout.
+///
+/// \param h Matrix heigth.
+/// \param w Matrix width.
+/// \param matrix Pointer to the matrix to write.
+/// \param file_name Name of the file.
+/// \param type Matrix elements type.
+/// \param self_name Name of the current program.
+/// \return 0 on success, -1 on an error.
+static int write_matrix_bin(size_t h, size_t w, void *matrix, char *file_name, int type, char *self_name) {
     size_t elt_size = type == i8 ? 1 :
                      (type == i32 ? 4 :
                      (type == f32 ? 4 :
@@ -152,25 +211,25 @@ static int write_matrix_bin(size_t h, size_t w, void *matrix, char *file_name, i
     // Open file
     FILE *f = fopen(file_name, "wb");
     if (f == NULL) {
-        fprintf(stderr, _("%s: error while opening file %s\n"), SELF_NAME, file_name);
+        fprintf(stderr, _("%s: error while opening file %s\n"), self_name, file_name);
         return 1;
     }
 
     // Write shape
     if (fwrite(&h, sizeof(size_t), 1, f) != 1) {
-        fprintf(stderr, _("%s: error while writing matrix height to file %s\n"), SELF_NAME, file_name);
+        fprintf(stderr, _("%s: error while writing matrix height to file %s\n"), self_name, file_name);
         fclose(f);
         return 1;
     }
     if (fwrite(&w, sizeof(size_t), 1, f) != 1) {
-        fprintf(stderr, _("%s: error while writing matrix height to file %s\n"), SELF_NAME, file_name);
+        fprintf(stderr, _("%s: error while writing matrix height to file %s\n"), self_name, file_name);
         fclose(f);
         return 1;
     }
 
     // Write
     if (fwrite(matrix, elt_size, h*w, f) != h*w) {
-        fprintf(stderr, _("%s: could not write all %lu bytes to file %s\n"), SELF_NAME, elt_size * h*w, file_name);
+        fprintf(stderr, _("%s: could not write all %lu bytes to file %s\n"), self_name, elt_size * h*w, file_name);
         fclose(f);
         return 1;
     }
@@ -180,7 +239,7 @@ static int write_matrix_bin(size_t h, size_t w, void *matrix, char *file_name, i
 }
 
 int main(int argc, char *argv[]) {
-    char *SELF_NAME = argv[0];
+    char *self_name = argv[0];
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALE_PATH);
     textdomain(PACKAGE);
@@ -191,10 +250,10 @@ int main(int argc, char *argv[]) {
     size_t m_0, m_2, k_0, k_1, n_1, n_2;
     void *input_0, *input_1, *output;
 
-    input_0 = read_matrix_from_bin(&m_0, &k_0, args.input_0, args.type, SELF_NAME);
+    input_0 = read_matrix_from_bin(&m_0, &k_0, args.input_0, args.type, self_name);
     if (input_0 == NULL)
         return 1;
-    input_1 = read_matrix_from_bin(&k_1, &n_1, args.input_1, args.type, SELF_NAME);
+    input_1 = read_matrix_from_bin(&k_1, &n_1, args.input_1, args.type, self_name);
     if (input_1 == NULL) {
         free(input_0);
         return 1;
@@ -202,14 +261,14 @@ int main(int argc, char *argv[]) {
     
     if (k_0 != k_1) {
         fprintf(stderr, _("%s: width of the left multiplier is %lu, "
-                          "but the height of the right one is %lu!\n"), SELF_NAME, k_0, k_1);
+                          "but the height of the right one is %lu!\n"), self_name, k_0, k_1);
         free(input_1);
         free(input_0);
         return 1;
     }
 
     if (!access(args.output, F_OK)) {
-        output = read_matrix_from_bin(&m_2, &n_2, args.output, args.type == i8 ? i32 : args.type, SELF_NAME);
+        output = read_matrix_from_bin(&m_2, &n_2, args.output, args.type == i8 ? i32 : args.type, self_name);
         if (output == NULL) {
             free(input_1);
             free(input_0);
@@ -217,7 +276,7 @@ int main(int argc, char *argv[]) {
         }
         if (m_0 != m_2) {
             fprintf(stderr, _("%s: height of the left multiplier is %lu, "
-                              "but the height of the output is %lu!\n"), SELF_NAME, m_0, m_2);
+                              "but the height of the output is %lu!\n"), self_name, m_0, m_2);
             free(output);
             free(input_1);
             free(input_0);
@@ -225,7 +284,7 @@ int main(int argc, char *argv[]) {
         }
         if (n_1 != n_2) {
             fprintf(stderr, _("%s: width of the right multiplier is %lu, "
-                              "but the width of the output is %lu!\n"), SELF_NAME, n_1, n_2);
+                              "but the width of the output is %lu!\n"), self_name, n_1, n_2);
             free(output);
             free(input_1);
             free(input_0);
@@ -239,7 +298,7 @@ int main(int argc, char *argv[]) {
         // Allocate space for matrix
         output = malloc(elt_size * m_0*n_1);
         if (output == NULL) {
-            fprintf(stderr, _("%s: error while allocating %lu bytes for output matrix\n"), SELF_NAME, elt_size * m_0*n_1);
+            fprintf(stderr, _("%s: error while allocating %lu bytes for output matrix\n"), self_name, elt_size * m_0*n_1);
             free(input_1);
             free(input_0);
             return 1;
@@ -259,7 +318,7 @@ int main(int argc, char *argv[]) {
         default: break; // unreachable
     }
 
-    if (write_matrix_bin(m_0, n_1, output, args.output, args.type == i8 ? i32 : args.type, SELF_NAME)) {
+    if (write_matrix_bin(m_0, n_1, output, args.output, args.type == i8 ? i32 : args.type, self_name)) {
         free(output);
         free(input_1);
         free(input_0);

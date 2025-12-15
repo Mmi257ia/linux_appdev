@@ -4,8 +4,8 @@
 AC_PREREQ([2.72])
 AC_INIT([Matrix operations runner], [1.0.0], [sportloto@mail.ru], [matrix_ops_runner])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
-
 LT_INIT([])
+DX_INIT_DOXYGEN([guesser])
 
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_REQUIRE_VERSION(0.23)
@@ -17,6 +17,9 @@ ALL_LINGUAS="ru"
 
 # Checks for programs.
 AC_PROG_CC
+AC_CHECK_PROG(HELP2MAN_CHECK, help2man, yes)
+AS_IF([test x"$HELP2MAN_CHECK" != x"yes"],
+      [AC_MSG_ERROR([help2man not found, please install it.])])
 
 # Checks for libraries.
 PKG_CHECK_MODULES([CHECK], [check])
@@ -38,5 +41,6 @@ AC_CHECK_FUNCS([setlocale strcasecmp strerror])
 AC_CONFIG_FILES([Makefile
                  po/Makefile.in
                  src/Makefile
-                 tests/Makefile])
+                 tests/Makefile
+                 Doxyfile])
 AC_OUTPUT
