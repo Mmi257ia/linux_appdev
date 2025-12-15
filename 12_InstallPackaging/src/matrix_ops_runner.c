@@ -43,16 +43,16 @@ struct args {
 static void split_binary_files(char *src, char **input_0, char **input_1, char **output, struct argp_state *state) {
     *input_0 = strtok(src, ",");
     if (*input_0 == NULL)
-        argp_failure(state, argp_err_exit_status, 0, "no files were specified");
+        argp_failure(state, argp_err_exit_status, 0, _("no files were specified"));
     *input_1 = strtok(NULL, ",");
     if (*input_1 == NULL)
-        argp_failure(state, argp_err_exit_status, 0, "just 1 of 3 files was specified");
+        argp_failure(state, argp_err_exit_status, 0, _("just 1 of 3 files specified"));
     *output = strtok(NULL, ",");
     if (*output == NULL)
-        argp_failure(state, argp_err_exit_status, 0, "just 2 of 3 files was specified");
+        argp_failure(state, argp_err_exit_status, 0, _("just 2 of 3 files specified"));
     char *tail = strtok(NULL, ",");
     if (tail != NULL)
-        argp_failure(state, argp_err_exit_status, 0, "more that 3 files were specified, tail is: \"%s\"", tail);
+        argp_failure(state, argp_err_exit_status, 0, _("more that 3 files specified, tail is: \"%s\""), tail);
 }
 
 static error_t parse_opt(int key, char *arg, struct argp_state *state) {
@@ -66,16 +66,16 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             else if (!strcasecmp(arg, "f64"))
                 args->type = f64;
             else
-                argp_failure(state, argp_err_exit_status, 0, "unsupported input type \"%s\"", arg);
+                argp_failure(state, argp_err_exit_status, 0, _("unsupported input type \"%s\""), arg);
             break;
         case 'f':
             split_binary_files(arg, &args->input_0, &args->input_1, &args->output, state);
             break;
         case ARGP_KEY_END:
             if (args->type == INVALID_TYPE)
-                argp_failure(state, argp_err_exit_status, 0, "input type is not specified");
+                argp_failure(state, argp_err_exit_status, 0, _("input type is not specified"));
             if (args->input_0 == NULL || args->input_1 == NULL || args->output == NULL)
-                argp_failure(state, argp_err_exit_status, 0, "input/output files are not specified");
+                argp_failure(state, argp_err_exit_status, 0, _("input/output files are not specified"));
         default:
             return ARGP_ERR_UNKNOWN;
     }
@@ -90,20 +90,8 @@ static struct argp argp = { options, parse_opt, 0, doc, 0, 0, PACKAGE };
 
 #define SELF_NAME self_name
 
-#define PRINT_ERROR(err, format, ...) do {                                      \
-    err = errno;                                                                \
-    char *err_string = strerror_or_unknown(err);                                \
-    fprintf(stderr, "%s: " format ": %s\n", SELF_NAME, __VA_ARGS__, err_string);\
-} while (0)
-
-static char *strerror_or_unknown(int err) {
-    char *res = strerror(err);
-    return res != NULL ? res : "Unknown error code";
-}
-
 // return NULL on error
 static void *read_matrix_from_bin(size_t *h, size_t *w, char *file_name, int type, char *SELF_NAME) {
-    int err;
     size_t elt_size = type == i8 ? 1 :
                      (type == i32 ? 4 :
                      (type == f32 ? 4 :
@@ -113,18 +101,18 @@ static void *read_matrix_from_bin(size_t *h, size_t *w, char *file_name, int typ
     // Open file
     FILE *f = fopen(file_name, "rb");
     if (f == NULL) {
-        PRINT_ERROR(err, "error while opening file %s", file_name);
+        fprintf(stderr, _("%s: error while opening file %s\n"), SELF_NAME, file_name);
         return NULL;
     }
 
     // Read shape
     if (fread(h, sizeof(size_t), 1, f) != 1) {
-        fprintf(stderr, "%s: error while reading matrix height from file %s\n", SELF_NAME, file_name);
+        fprintf(stderr, _("%s: error while reading matrix height from file %s\n"), SELF_NAME, file_name);
         fclose(f);
         return NULL;
     }
     if (fread(w, sizeof(size_t), 1, f) != 1) {
-        fprintf(stderr, "%s: error while reading matrix width from file %s\n", SELF_NAME, file_name);
+        fprintf(stderr, _("%s: error while reading matrix width from file %s\n"), SELF_NAME, file_name);
         fclose(f);
         return NULL;
     }
@@ -132,7 +120,8 @@ static void *read_matrix_from_bin(size_t *h, size_t *w, char *file_name, int typ
     // Allocate space for matrix
     void *matrix = malloc(elt_size * (*h)*(*w));
     if (matrix == NULL) {
-        PRINT_ERROR(err, "error while allocating %lu bytes for matrix from file %s", elt_size * (*h)*(*w), file_name);
+        fprintf(stderr, _("%s: error while allocating %lu bytes "
+                          "for matrix from file %s\n"), SELF_NAME, elt_size * (*h)*(*w), file_name);
         fclose(f);
         return NULL;
     }
@@ -147,14 +136,13 @@ static void *read_matrix_from_bin(size_t *h, size_t *w, char *file_name, int typ
     // Read everything that we can, absent elements are
     // already initialized so don't check how much we read,
     // ignore excessive elements.
-    fread(matrix, elt_size, (*h)*(*w), f);
+    int stub = fread(matrix, elt_size, (*h)*(*w), f);
 
     fclose(f);
     return matrix;
 }
 
 static int write_matrix_bin(size_t h, size_t w, void *matrix, char *file_name, int type, char *SELF_NAME) {
-    int err;
     size_t elt_size = type == i8 ? 1 :
                      (type == i32 ? 4 :
                      (type == f32 ? 4 :
@@ -164,25 +152,25 @@ static int write_matrix_bin(size_t h, size_t w, void *matrix, char *file_name, i
     // Open file
     FILE *f = fopen(file_name, "wb");
     if (f == NULL) {
-        PRINT_ERROR(err, "error while opening file %s", file_name);
+        fprintf(stderr, _("%s: error while opening file %s\n"), SELF_NAME, file_name);
         return 1;
     }
 
     // Write shape
     if (fwrite(&h, sizeof(size_t), 1, f) != 1) {
-        fprintf(stderr, "%s: error while writing matrix height to file %s\n", SELF_NAME, file_name);
+        fprintf(stderr, _("%s: error while writing matrix height to file %s\n"), SELF_NAME, file_name);
         fclose(f);
         return 1;
     }
     if (fwrite(&w, sizeof(size_t), 1, f) != 1) {
-        fprintf(stderr, "%s: error while writing matrix height to file %s\n", SELF_NAME, file_name);
+        fprintf(stderr, _("%s: error while writing matrix height to file %s\n"), SELF_NAME, file_name);
         fclose(f);
         return 1;
     }
 
     // Write
     if (fwrite(matrix, elt_size, h*w, f) != h*w) {
-        fprintf(stderr, "%s: could not write all %lu bytes to file %s\n", SELF_NAME, elt_size * h*w, file_name);
+        fprintf(stderr, _("%s: could not write all %lu bytes to file %s\n"), SELF_NAME, elt_size * h*w, file_name);
         fclose(f);
         return 1;
     }
@@ -193,7 +181,6 @@ static int write_matrix_bin(size_t h, size_t w, void *matrix, char *file_name, i
 
 int main(int argc, char *argv[]) {
     char *SELF_NAME = argv[0];
-    int err;
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALE_PATH);
     textdomain(PACKAGE);
@@ -214,8 +201,8 @@ int main(int argc, char *argv[]) {
     }
     
     if (k_0 != k_1) {
-        fprintf(stderr, "%s: width of the left multiplier is %lu, "
-                        "but the height of the right one is %lu!\n", SELF_NAME, k_0, k_1);
+        fprintf(stderr, _("%s: width of the left multiplier is %lu, "
+                          "but the height of the right one is %lu!\n"), SELF_NAME, k_0, k_1);
         free(input_1);
         free(input_0);
         return 1;
@@ -229,16 +216,16 @@ int main(int argc, char *argv[]) {
             return 1;
         }
         if (m_0 != m_2) {
-            fprintf(stderr, "%s: height of the left multiplier is %lu, "
-                            "but the height of the output is %lu!\n", SELF_NAME, m_0, m_2);
+            fprintf(stderr, _("%s: height of the left multiplier is %lu, "
+                              "but the height of the output is %lu!\n"), SELF_NAME, m_0, m_2);
             free(output);
             free(input_1);
             free(input_0);
             return 1;
         }
         if (n_1 != n_2) {
-            fprintf(stderr, "%s: width of the right multiplier is %lu, "
-                            "but the width of the output is %lu!\n", SELF_NAME, n_1, n_2);
+            fprintf(stderr, _("%s: width of the right multiplier is %lu, "
+                              "but the width of the output is %lu!\n"), SELF_NAME, n_1, n_2);
             free(output);
             free(input_1);
             free(input_0);
@@ -252,7 +239,7 @@ int main(int argc, char *argv[]) {
         // Allocate space for matrix
         output = malloc(elt_size * m_0*n_1);
         if (output == NULL) {
-            PRINT_ERROR(err, "error while allocating %lu bytes for output matrix", elt_size * m_0*n_1);
+            fprintf(stderr, _("%s: error while allocating %lu bytes for output matrix\n"), SELF_NAME, elt_size * m_0*n_1);
             free(input_1);
             free(input_0);
             return 1;
@@ -283,4 +270,20 @@ int main(int argc, char *argv[]) {
     free(input_1);
     free(input_0);
     return 0;
+}
+
+__attribute__((unused)) static void __gettext_stub() {
+    _("Usage:");
+    _(" [OPTION...]");
+    _("Give a short usage message");
+    _("Give this help list");
+    _("Print program version");
+    _("Mandatory or optional arguments to long options are also "
+      "mandatory or optional for any corresponding short options.");
+    _("Try `%s --help' or `%s --usage' for more information.\n");
+    // below need to be synced with arg description and doc
+    _("Specify input type. Currently supported: `i8`, `f32` and `f64`. [REQUIRED]");
+    _("Binary files with inputs and outputs (comma-separated) [REQUIRED]");
+    _("Matrix operations runner.\vThe only supported operation is matrix multiplication. "
+      "Supported types: i8 x i8 -> i32, f32 x f32 -> f32, f64 x f64 -> f64.");
 }
