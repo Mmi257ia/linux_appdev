@@ -5,6 +5,8 @@ AC_PREREQ([2.72])
 AC_INIT([Matrix operations runner], [1.0.0], [sportloto@mail.ru], [matrix_ops_runner])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
+LT_INIT([])
+
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_REQUIRE_VERSION(0.23)
 
@@ -17,6 +19,7 @@ ALL_LINGUAS="ru"
 AC_PROG_CC
 
 # Checks for libraries.
+PKG_CHECK_MODULES([CHECK], [check])
 
 # Checks for header files.
 AC_CHECK_HEADERS([libintl.h stdint.h unistd.h])
