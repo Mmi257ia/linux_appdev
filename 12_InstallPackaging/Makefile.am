@@ -1,4 +1,7 @@
-SUBDIRS = src po
+SUBDIRS = src po tests
+
+check-tests-logs:
+	cat tests/*.log
 
 # Use this to clean all, including the generates made by autoconf
 clean-all: clean

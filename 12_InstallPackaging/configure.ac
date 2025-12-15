@@ -20,6 +20,8 @@ AC_PROG_CC
 
 # Checks for libraries.
 PKG_CHECK_MODULES([CHECK], [check])
+AC_SUBST(CK_VERBOSITY, verbose) # default
+AC_ARG_VAR(CK_VERBOSITY, [Default: "verbose". Can also be "silent", "minimal" or "normal"])
 
 # Checks for header files.
 AC_CHECK_HEADERS([libintl.h stdint.h unistd.h])
@@ -33,5 +35,8 @@ AC_TYPE_SIZE_T
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([setlocale strcasecmp strerror])
 
-AC_CONFIG_FILES([Makefile po/Makefile.in src/Makefile])
+AC_CONFIG_FILES([Makefile
+                 po/Makefile.in
+                 src/Makefile
+                 tests/Makefile])
 AC_OUTPUT
